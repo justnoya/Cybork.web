@@ -875,7 +875,7 @@ function Footer() {
           height: isMobile ? "64px" : "80px",
           margin: "0 auto 24px",
           position: "relative",
-          opacity: 0.28,
+          opacity: 0.65,
         }}
       >
         <ASCIIText
@@ -885,7 +885,7 @@ function Footer() {
           textColor="#ffffff"
           planeBaseHeight={9}
           enableWaves={false}
-          gradientCss="linear-gradient(160deg, rgb(100,106,118) 0%, rgb(56,59,67) 100%)"
+          gradientCss="linear-gradient(160deg, rgb(180,186,200) 0%, rgb(100,106,118) 100%)"
         />
       </div>
 

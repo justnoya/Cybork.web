@@ -1,5 +1,5 @@
 {
-  "buildCommand": "pnpm --filter @workspace/cybork-hero run build:vercel",
+  "buildCommand": "pnpm --filter @workspace/cybork-hero run build",
   "outputDirectory": "artifacts/cybork-hero/dist/public",
   "installCommand": "pnpm install",
   "framework": null

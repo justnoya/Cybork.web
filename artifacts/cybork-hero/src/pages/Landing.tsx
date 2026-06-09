@@ -378,49 +378,41 @@ function Hero() {
           </span>
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.16 }}
-          className="flex items-center justify-center gap-3 mb-6"
-        >
-          <img
-            src={logoUrl}
-            alt="Cybork"
-            className="w-14 h-14 object-contain"
-            style={{ mixBlendMode: "screen" }}
-          />
-          <span
-            style={{
-              fontSize: "clamp(1.6rem, 6vw, 2rem)",
-              fontWeight: 700,
-              letterSpacing: "0.16em",
-              color: "hsl(0 0% 95%)",
-              fontFamily: "var(--app-font-sans)",
-            }}
-          >
-            CYBORK
-          </span>
-        </motion.div>
-
-        {/* ASCIIText headline — ReactBits TS+CSS */}
+        {/* ASCIIText — "CYBORK" as hero centrepiece, ReactBits TS+CSS */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.7, delay: 0.22 }}
-          style={{ width: "100%", height: "120px", marginBottom: "16px", position: "relative" }}
-          aria-label="Your server, upgraded."
+          transition={{ duration: 0.7, delay: 0.14 }}
+          style={{ width: "100%", height: "160px", marginBottom: "4px", position: "relative" }}
+          aria-label="CYBORK"
         >
           <ASCIIText
-            text="Your server, upgraded."
-            asciiFontSize={7}
-            textFontSize={110}
+            text="CYBORK"
+            asciiFontSize={10}
+            textFontSize={300}
             textColor="#ffffff"
-            planeBaseHeight={7}
+            planeBaseHeight={9}
             enableWaves={true}
-            gradientCss="linear-gradient(135deg, rgba(200,160,60,1) 0%, rgba(127,255,127,0.9) 100%)"
+            gradientCss="linear-gradient(160deg, #ffffff 0%, rgba(210,215,225,0.92) 55%, rgba(160,168,185,0.85) 100%)"
           />
         </motion.div>
+
+        <motion.h1
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.26 }}
+          style={{
+            fontSize: "clamp(1.5rem, 5vw, 2.2rem)",
+            fontWeight: 700,
+            color: "hsl(0 0% 92%)",
+            letterSpacing: "-0.03em",
+            lineHeight: 1.15,
+            marginBottom: "14px",
+            fontFamily: "var(--app-font-sans)",
+          }}
+        >
+          Your server, upgraded.
+        </motion.h1>
 
         <motion.p
           initial={{ opacity: 0, y: 10 }}

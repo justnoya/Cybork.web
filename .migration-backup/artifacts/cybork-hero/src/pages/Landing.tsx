@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import CardNav from "@/components/CardNav";
+import { useIsMobile } from "@/hooks/use-mobile";
 import {
   Shield,
   Music,
@@ -295,13 +296,13 @@ const CYBORK_NAV_ITEMS = [
     ],
   },
   {
-    label: "Stats",
+    label: "Legal",
     bgColor: "rgba(22, 24, 30, 0.97)",
     textColor: "rgba(255,255,255,0.85)",
     links: [
-      { label: "1,200+ Servers",  href: "#stats", ariaLabel: "Server count stat" },
-      { label: "50K+ Members",    href: "#stats", ariaLabel: "Member count stat" },
-      { label: "2M+ Commands Run",href: "#stats", ariaLabel: "Commands run stat" },
+      { label: "Terms of Service", href: "/terms",   ariaLabel: "Terms of Service" },
+      { label: "Privacy Policy",   href: "/privacy", ariaLabel: "Privacy Policy" },
+      { label: "Support",          href: "/support", ariaLabel: "Support" },
     ],
   },
 ];
@@ -347,6 +348,10 @@ function AnimatedCoordinates() {
 }
 
 function Hero() {
+  const isMobile = useIsMobile();
+  const asciiFontSize = isMobile ? 5 : 10;
+  const asciiHeight   = isMobile ? 120 : 160;
+
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center px-4 pt-16 overflow-hidden">
       <HUDCard className="w-full max-w-lg mt-8 text-center p-5 sm:p-10">
@@ -383,13 +388,13 @@ function Hero() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.7, delay: 0.14 }}
-          style={{ width: "100%", height: "160px", marginBottom: "4px", position: "relative" }}
+          style={{ width: "100%", height: `${asciiHeight}px`, marginBottom: "4px", position: "relative" }}
           aria-label="CYBORK"
         >
           <ASCIIText
             text="CYBORK"
-            asciiFontSize={10}
-            textFontSize={300}
+            asciiFontSize={asciiFontSize}
+            textFontSize={isMobile ? 200 : 300}
             textColor="#ffffff"
             planeBaseHeight={9}
             enableWaves={true}
@@ -852,50 +857,53 @@ function CTA() {
 }
 
 function Footer() {
+  const isMobile = useIsMobile();
   return (
     <footer
-      className="px-6 py-8"
+      className="px-6 pt-10 pb-8"
       style={{
         borderTop: `1px solid rgba(36, 38, 44, 0.8)`,
         background: "rgba(6, 6, 8, 0.9)",
         backdropFilter: "blur(20px)",
       }}
     >
-      <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div className="flex items-center gap-2">
-          <img
-            src={logoUrl}
-            alt="Cybork"
-            className="w-5 h-5 object-contain"
-            style={{ mixBlendMode: "screen", opacity: 0.55 }}
-          />
-          <span
-            style={{
-              color: B[3],
-              fontSize: "10px",
-              fontWeight: 700,
-              letterSpacing: "0.22em",
-              fontFamily: "var(--app-font-sans)",
-            }}
-          >
-            CYBORK
-          </span>
-        </div>
+      {/* ASCII wordmark */}
+      <div
+        style={{
+          width: "100%",
+          maxWidth: "480px",
+          height: isMobile ? "64px" : "80px",
+          margin: "0 auto 24px",
+          position: "relative",
+          opacity: 0.65,
+        }}
+      >
+        <ASCIIText
+          text="CYBORK"
+          asciiFontSize={isMobile ? 4 : 5}
+          textFontSize={160}
+          textColor="#ffffff"
+          planeBaseHeight={9}
+          enableWaves={false}
+          gradientCss="linear-gradient(160deg, rgb(180,186,200) 0%, rgb(100,106,118) 100%)"
+        />
+      </div>
 
+      <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
         <p style={{ color: B[2], fontSize: "10px", fontFamily: "var(--app-font-mono)" }}>
           Not affiliated with Discord Inc.
         </p>
 
         <div className="flex gap-5">
-          {["Terms", "Privacy", "Support"].map((item) => (
+          {[["Terms", "/terms"], ["Privacy", "/privacy"], ["Support", "/support"]].map(([label, href]) => (
             <a
-              key={item}
-              href="#"
-              style={{ color: B[3], fontSize: "11px", transition: "color 150ms" }}
+              key={label}
+              href={href}
+              style={{ color: B[3], fontSize: "11px", transition: "color 150ms", textDecoration: "none" }}
               onMouseEnter={(e) => (e.currentTarget.style.color = B[5])}
               onMouseLeave={(e) => (e.currentTarget.style.color = B[3])}
             >
-              {item}
+              {label}
             </a>
           ))}
         </div>

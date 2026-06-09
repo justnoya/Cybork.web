@@ -857,36 +857,39 @@ function CTA() {
 }
 
 function Footer() {
+  const isMobile = useIsMobile();
   return (
     <footer
-      className="px-6 py-8"
+      className="px-6 pt-10 pb-8"
       style={{
         borderTop: `1px solid rgba(36, 38, 44, 0.8)`,
         background: "rgba(6, 6, 8, 0.9)",
         backdropFilter: "blur(20px)",
       }}
     >
-      <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div className="flex items-center gap-2">
-          <img
-            src={logoUrl}
-            alt="Cybork"
-            className="w-5 h-5 object-contain"
-            style={{ mixBlendMode: "screen", opacity: 0.55 }}
-          />
-          <span
-            style={{
-              color: B[3],
-              fontSize: "10px",
-              fontWeight: 700,
-              letterSpacing: "0.22em",
-              fontFamily: "var(--app-font-sans)",
-            }}
-          >
-            CYBORK
-          </span>
-        </div>
+      {/* ASCII wordmark */}
+      <div
+        style={{
+          width: "100%",
+          maxWidth: "480px",
+          height: isMobile ? "64px" : "80px",
+          margin: "0 auto 24px",
+          position: "relative",
+          opacity: 0.28,
+        }}
+      >
+        <ASCIIText
+          text="CYBORK"
+          asciiFontSize={isMobile ? 4 : 5}
+          textFontSize={160}
+          textColor="#ffffff"
+          planeBaseHeight={9}
+          enableWaves={false}
+          gradientCss="linear-gradient(160deg, rgb(100,106,118) 0%, rgb(56,59,67) 100%)"
+        />
+      </div>
 
+      <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
         <p style={{ color: B[2], fontSize: "10px", fontFamily: "var(--app-font-mono)" }}>
           Not affiliated with Discord Inc.
         </p>

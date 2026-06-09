@@ -337,8 +337,8 @@ async function runCanvas2D(
         const a  = img[i + 3];
         if (a < 60) { str += ' '; continue; }
         const hash = Math.abs(Math.sin(col * 127.1 + row * 311.7) * 43758.5) % 1;
-        const t = (a - 60) / 195;
-        const density = t * (0.5 + hash * 0.5);
+        const nt = (a - 60) / 195;
+        const density = nt * (0.5 + hash * 0.5);
         const idx = Math.max(1, Math.round(density * (CHARSET.length - 1)));
         str += CHARSET[idx];
       }

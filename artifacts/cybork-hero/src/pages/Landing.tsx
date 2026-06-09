@@ -355,34 +355,6 @@ function Hero() {
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center px-4 pt-16 overflow-hidden">
       <HUDCard className="w-full max-w-lg mt-8 text-center p-5 sm:p-10">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.88 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.4, delay: 0.1 }}
-          className="inline-flex items-center gap-2 px-3.5 py-1.5 mb-8"
-          style={{
-            background: ACCENT.badgeBg,
-            border: ACCENT.badgeBorder,
-            backdropFilter: "blur(10px)",
-          }}
-        >
-          <span style={{ color: ACCENT.phosphor, display: "flex", textShadow: `0 0 8px ${ACCENT.phosphor}` }}>
-            <Zap size={10} />
-          </span>
-          <span
-            style={{
-              color: ACCENT.badge,
-              fontSize: "10px",
-              fontWeight: 600,
-              letterSpacing: "0.14em",
-              fontFamily: "var(--app-font-mono)",
-              textTransform: "uppercase",
-            }}
-          >
-            Live on 1,200+ servers
-          </span>
-        </motion.div>
-
         {/* ASCIIText — "CYBORK" as hero centrepiece, ReactBits TS+CSS */}
         <motion.div
           initial={{ opacity: 0 }}

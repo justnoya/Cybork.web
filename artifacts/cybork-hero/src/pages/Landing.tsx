@@ -269,92 +269,171 @@ function CommandLine({
   );
 }
 
+const NAV_ITEMS = [
+  { label: "Features", href: "#features" },
+  { label: "Commands", href: "#commands" },
+  { label: "Stats",    href: "#stats"    },
+];
+
+function CardNavItem({ label, href }: { label: string; href: string }) {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <a
+      href={href}
+      data-testid={`nav-${label.toLowerCase()}`}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      className="relative px-3 py-1.5 transition-all duration-200 select-none"
+      style={{
+        fontFamily: "var(--app-font-sans)",
+        fontSize: "12px",
+        fontWeight: 500,
+        letterSpacing: "0.06em",
+        textTransform: "uppercase",
+        color: hovered ? "hsl(0 0% 96%)" : B[5],
+        textDecoration: "none",
+      }}
+    >
+      {/* per-item card background — slides in on hover */}
+      <motion.span
+        className="absolute inset-0 pointer-events-none"
+        initial={false}
+        animate={{
+          opacity: hovered ? 1 : 0,
+          scale: hovered ? 1 : 0.88,
+        }}
+        transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+        style={{
+          background: "rgba(100, 106, 118, 0.12)",
+          border: "1px solid rgba(255,255,255,0.10)",
+          borderRadius: "4px",
+        }}
+      />
+      <span className="relative z-10">{label}</span>
+    </a>
+  );
+}
+
 function Nav() {
-  const [scrolled, setScrolled] = useState(false);
+  const [visible, setVisible] = useState(true);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
+    let prev = window.scrollY;
+    const onScroll = () => {
+      const curr = window.scrollY;
+      setVisible(curr < 80 || curr < prev);
+      prev = curr;
+    };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   return (
-    <motion.nav
-      initial={{ opacity: 0, y: -14 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-10 h-16 transition-all duration-400"
-      style={{
-        background: scrolled ? "rgba(8, 8, 10, 0.84)" : "transparent",
-        backdropFilter: scrolled ? "blur(24px) saturate(1.3)" : "none",
-        WebkitBackdropFilter: scrolled ? "blur(24px) saturate(1.3)" : "none",
-        borderBottom: scrolled ? `1px solid rgba(76, 81, 92, 0.28)` : "none",
-      }}
+    <motion.div
+      className="fixed top-0 left-0 right-0 z-50 flex justify-center pt-4 px-4"
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: visible ? 1 : 0, y: visible ? 0 : -8 }}
+      transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
+      style={{ pointerEvents: visible ? "auto" : "none" }}
     >
-      <div className="flex items-center gap-2.5">
-        <img
-          src={logoUrl}
-          alt="Cybork"
-          className="w-8 h-8 rounded-none object-contain"
-          style={{ mixBlendMode: "screen" }}
-        />
-        <span
-          style={{
-            fontWeight: 700,
-            fontSize: "13px",
-            letterSpacing: "0.16em",
-            color: "hsl(0 0% 88%)",
-            fontFamily: "var(--app-font-sans)",
-          }}
-        >
-          CYBORK
-        </span>
-      </div>
-
-      <div className="hidden md:flex items-center gap-8">
-        {["Features", "Commands", "Stats"].map((item) => (
-          <a
-            key={item}
-            href={`#${item.toLowerCase()}`}
-            className="transition-colors duration-150"
-            style={{
-              color: B[5],
-              fontSize: "12px",
-              fontWeight: 500,
-              letterSpacing: "0.04em",
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = "hsl(0 0% 92%)")}
-            onMouseLeave={(e) => (e.currentTarget.style.color = B[5])}
-          >
-            {item}
-          </a>
-        ))}
-      </div>
-
-      <a
-        href={DISCORD_INVITE}
-        data-testid="nav-invite-button"
-        className="group flex items-center gap-2 px-4 py-2 transition-all duration-250 active:scale-95 hover:text-white"
+      {/* ── Outer scan-line card shell ── */}
+      <div
+        className="relative flex items-center gap-1 px-2 py-2"
         style={{
-          background: "rgba(100, 106, 118, 0.15)",
-          border: "1px solid rgba(100, 106, 118, 0.35)",
-          color: "hsl(0 0% 88%)",
-          fontSize: "12px",
-          fontWeight: 600,
-          backdropFilter: "blur(10px)",
-          letterSpacing: "0.02em",
+          background: "rgba(10, 11, 14, 0.82)",
+          backdropFilter: "blur(20px) saturate(1.4)",
+          WebkitBackdropFilter: "blur(20px) saturate(1.4)",
+          border: "1px solid rgba(255,255,255,0.08)",
+          borderRadius: "10px",
+          boxShadow: "0 8px 32px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.05)",
+          /* subtle scan-line overlay */
+          backgroundImage:
+            "linear-gradient(rgba(10,11,14,0.82) 0%, rgba(10,11,14,0.82) 100%), repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(0,0,0,0.04) 1px, rgba(0,0,0,0.04) 2px)",
         }}
       >
-        <SiDiscord size={13} className="transition-transform group-hover:scale-110" />
-        Add to Discord
-        <style dangerouslySetInnerHTML={{__html: `
-          a[data-testid="nav-invite-button"]:hover {
-            box-shadow: 0 0 18px rgba(200, 160, 60, 0.35), 0 0 6px rgba(200,160,60,0.2);
-            border-color: rgba(200, 160, 60, 0.5) !important;
-          }
-        `}} />
-      </a>
-    </motion.nav>
+        {/* Corner brackets — HUD targeting marks */}
+        {[
+          { top: "3px",  left:  "3px",  borderTop: "1px solid rgba(255,255,255,0.18)", borderLeft:  "1px solid rgba(255,255,255,0.18)" },
+          { top: "3px",  right: "3px",  borderTop: "1px solid rgba(255,255,255,0.18)", borderRight: "1px solid rgba(255,255,255,0.18)" },
+          { bottom:"3px",left:  "3px",  borderBottom:"1px solid rgba(255,255,255,0.18)",borderLeft:  "1px solid rgba(255,255,255,0.18)" },
+          { bottom:"3px",right: "3px",  borderBottom:"1px solid rgba(255,255,255,0.18)",borderRight: "1px solid rgba(255,255,255,0.18)" },
+        ].map((s, i) => (
+          <span
+            key={i}
+            className="absolute pointer-events-none"
+            style={{ width: "7px", height: "7px", ...s }}
+          />
+        ))}
+
+        {/* ── Logo + wordmark ── */}
+        <div className="flex items-center gap-2 pl-2 pr-3 mr-1" style={{ borderRight: "1px solid rgba(255,255,255,0.07)" }}>
+          <img
+            src={logoUrl}
+            alt="Cybork"
+            className="w-6 h-6 object-contain"
+            style={{ mixBlendMode: "screen" }}
+          />
+          <span
+            style={{
+              fontFamily: "var(--app-font-sans)",
+              fontWeight: 700,
+              fontSize: "12px",
+              letterSpacing: "0.18em",
+              color: "hsl(0 0% 90%)",
+              whiteSpace: "nowrap",
+            }}
+          >
+            CYBORK
+          </span>
+        </div>
+
+        {/* ── Nav items ── */}
+        <div className="hidden md:flex items-center gap-0.5">
+          {NAV_ITEMS.map((item) => (
+            <CardNavItem key={item.label} label={item.label} href={item.href} />
+          ))}
+        </div>
+
+        {/* ── Divider ── */}
+        <div className="hidden md:block mx-2 self-stretch" style={{ width: "1px", background: "rgba(255,255,255,0.07)" }} />
+
+        {/* ── CTA ── */}
+        <a
+          href={DISCORD_INVITE}
+          data-testid="nav-invite-button"
+          className="group flex items-center gap-1.5 px-3 py-1.5 transition-all duration-250 active:scale-95 select-none"
+          style={{
+            background: "rgba(255,255,255,0.06)",
+            border: "1px solid rgba(255,255,255,0.11)",
+            borderRadius: "6px",
+            color: "hsl(0 0% 92%)",
+            fontSize: "11px",
+            fontFamily: "var(--app-font-sans)",
+            fontWeight: 600,
+            letterSpacing: "0.06em",
+            textTransform: "uppercase",
+            whiteSpace: "nowrap",
+            textDecoration: "none",
+            transition: "box-shadow 0.25s, border-color 0.25s, background 0.25s",
+          }}
+          onMouseEnter={(e) => {
+            const el = e.currentTarget as HTMLElement;
+            el.style.boxShadow = "0 0 18px rgba(200,160,60,0.35), 0 0 6px rgba(200,160,60,0.2)";
+            el.style.borderColor = "rgba(200,160,60,0.5)";
+            el.style.background = "rgba(255,255,255,0.09)";
+          }}
+          onMouseLeave={(e) => {
+            const el = e.currentTarget as HTMLElement;
+            el.style.boxShadow = "none";
+            el.style.borderColor = "rgba(255,255,255,0.11)";
+            el.style.background = "rgba(255,255,255,0.06)";
+          }}
+        >
+          <SiDiscord size={12} />
+          Add to Discord
+        </a>
+      </div>
+    </motion.div>
   );
 }
 

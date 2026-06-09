@@ -16,7 +16,7 @@ import {
   Check,
 } from "lucide-react";
 import { SiDiscord } from "react-icons/si";
-import { FireBackground } from "@/components/FireBackground";
+import { NoiseBackground } from "@/components/NoiseBackground";
 import logoUrl from "@assets/5e491840e325ffc189450199e39413a5_1780984645568.webp";
 
 const DISCORD_INVITE = "https://discord.com/oauth2/authorize";
@@ -226,7 +226,7 @@ function Nav() {
           src={logoUrl}
           alt="Cybork"
           className="w-8 h-8 rounded-lg object-contain"
-          style={{ filter: "brightness(0) invert(1)" }}
+          style={{ mixBlendMode: "screen" }}
         />
         <span className="font-semibold text-sm tracking-wide" style={{ color: "hsl(0 0% 90%)" }}>
           CYBORK
@@ -306,7 +306,7 @@ function Hero() {
               src={logoUrl}
               alt="Cybork"
               className="w-14 h-14 object-contain"
-              style={{ filter: "brightness(0) invert(1)" }}
+              style={{ mixBlendMode: "screen" }}
             />
             <span
               className="text-3xl font-bold"
@@ -735,8 +735,8 @@ function Footer() {
           <img
             src={logoUrl}
             alt="Cybork"
-            className="w-5 h-5 object-contain opacity-40"
-            style={{ filter: "brightness(0) invert(1)" }}
+            className="w-5 h-5 object-contain opacity-50"
+            style={{ mixBlendMode: "screen" }}
           />
           <span
             className="text-xs font-semibold tracking-widest"
@@ -769,7 +769,7 @@ function Footer() {
 export default function Landing() {
   return (
     <div className="relative min-h-screen" style={{ background: "hsl(30 5% 7%)" }}>
-      <FireBackground opacity={0.44} />
+      <NoiseBackground />
       <div className="relative" style={{ zIndex: 1 }}>
         <Nav />
         <Hero />

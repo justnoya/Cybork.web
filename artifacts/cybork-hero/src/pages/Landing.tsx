@@ -349,7 +349,7 @@ function AnimatedCoordinates() {
 function Hero() {
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center px-4 pt-16 overflow-hidden">
-      <HUDCard className="w-full max-w-lg mt-8 text-center p-10">
+      <HUDCard className="w-full max-w-lg mt-8 text-center p-5 sm:p-10">
         <motion.div
           initial={{ opacity: 0, scale: 0.88 }}
           animate={{ opacity: 1, scale: 1 }}

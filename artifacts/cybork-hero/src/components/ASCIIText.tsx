@@ -110,39 +110,34 @@ async function runWebGL(
   renderer.setPixelRatio(1);
   renderer.setClearColor(0x000000, 0);
 
-  // ── ASCII filter ───────────────────────────────────────────────────────
+  // Space Mono fixed width-to-height ratio (avoids measuring before font loads).
+  const CHAR_W_GL = asciiFontSize * 0.601;
+
+  // ── ASCII filter — flex wrapper centres the pre reliably on mobile ──────
   const filterDiv = document.createElement('div');
-  filterDiv.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;';
+  filterDiv.style.cssText = 'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;overflow:hidden;pointer-events:none;';
   const pre = document.createElement('pre');
+  Object.assign(pre.style, {
+    fontFamily: "'Space Mono', monospace",
+    fontSize: `${asciiFontSize}px`,
+    margin: '0', padding: '0', lineHeight: '1em',
+    userSelect: 'none', flexShrink: '0',
+    backgroundImage: gradientCss,
+    WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+    backgroundClip: 'text', whiteSpace: 'pre',
+  });
   const ascCanvas = document.createElement('canvas');
   const ascCtx = ascCanvas.getContext('2d')!;
   filterDiv.appendChild(pre);
   filterDiv.appendChild(ascCanvas);
   container.appendChild(filterDiv);
 
-  const applyPreStyle = () => {
-    Object.assign(pre.style, {
-      fontFamily: "'Space Mono', monospace",
-      fontSize: `${asciiFontSize}px`,
-      margin: '0', padding: '0', lineHeight: '1em',
-      position: 'absolute', left: '50%', top: '50%',
-      transform: 'translate(-50%,-50%)',
-      zIndex: '9', userSelect: 'none',
-      backgroundImage: gradientCss,
-      WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-      backgroundClip: 'text',
-    });
-  };
-
   const resize = (w: number, h: number) => {
     renderer.setSize(w, h);
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
-    ascCtx.font = `${asciiFontSize}px Space Mono, monospace`;
-    const cw = ascCtx.measureText('A').width;
-    ascCanvas.width  = Math.floor(w / (asciiFontSize * (cw / asciiFontSize)));
-    ascCanvas.height = Math.floor(h / asciiFontSize);
-    applyPreStyle();
+    ascCanvas.width  = Math.max(1, Math.floor(w / CHAR_W_GL));
+    ascCanvas.height = Math.max(1, Math.floor(h / asciiFontSize));
   };
 
   resize(width, height);
@@ -187,9 +182,10 @@ async function runWebGL(
       for (let x = 0; x < ascCanvas.width; x++) {
         const i = (x + y * ascCanvas.width) * 4;
         const a = img[i + 3];
-        if (a === 0) { str += ' '; continue; }
-        const gray = (0.3 * img[i] + 0.6 * img[i+1] + 0.1 * img[i+2]) / 255;
-        const idx = CHARSET.length - 1 - Math.floor((1 - gray) * (CHARSET.length - 1));
+        if (a < 8) { str += ' '; continue; }
+        const hash = Math.abs(Math.sin(x * 127.1 + y * 311.7) * 43758.5) % 1;
+        const density = (a / 255) * (0.55 + hash * 0.45);
+        const idx = Math.round(density * (CHARSET.length - 1));
         str += CHARSET[idx];
       }
       str += '\n';
@@ -214,7 +210,7 @@ async function runWebGL(
    gradient colouring. A sine-based wave distorts the sampling over time.
    ══════════════════════════════════════════════════════════════════════════ */
 
-function runCanvas2D(
+async function runCanvas2D(
   container: HTMLElement,
   text: string,
   asciiFontSize: number,
@@ -225,10 +221,15 @@ function runCanvas2D(
   gradientCss: string,
   signal: AbortSignal,
 ) {
+  // ── wait for Space Mono to load before measuring/rendering ────────────
+  const font = `600 ${textFontSize}px Space Mono, monospace`;
+  try { await document.fonts.load(font); } catch {}
+  await document.fonts.ready;
+  if (signal.aborted) return;
+
   // ── render text to an offscreen canvas ────────────────────────────────
   const offscreen = document.createElement('canvas');
   const ctx2d = offscreen.getContext('2d')!;
-  const font = `600 ${textFontSize}px Space Mono, monospace`;
   ctx2d.font = font;
   const m = ctx2d.measureText(text);
   offscreen.width  = Math.ceil(m.width) + 20;
@@ -237,20 +238,31 @@ function runCanvas2D(
   ctx2d.fillStyle = textColor;
   ctx2d.fillText(text, 10, 10 + m.actualBoundingBoxAscent);
 
+  // Space Mono has a fixed 0.601 width-to-height ratio — use this instead
+  // of measuring from canvas (which fails before the font loads on mobile).
+  const CHAR_W = asciiFontSize * 0.601;
+
+  // ── centering wrapper (flex — works reliably on mobile) ────────────────
+  const wrapper = document.createElement('div');
+  Object.assign(wrapper.style, {
+    position: 'absolute', inset: '0',
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    overflow: 'hidden', pointerEvents: 'none',
+  });
+  container.appendChild(wrapper);
+
   // ── output pre element ─────────────────────────────────────────────────
   const pre = document.createElement('pre');
   Object.assign(pre.style, {
     fontFamily: "'Space Mono', monospace",
     fontSize: `${asciiFontSize}px`,
     margin: '0', padding: '0', lineHeight: '1em',
-    position: 'absolute', left: '50%', top: '50%',
-    transform: 'translate(-50%,-50%)',
-    zIndex: '9', userSelect: 'none',
+    userSelect: 'none', flexShrink: '0',
     backgroundImage: gradientCss,
     WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
     backgroundClip: 'text', whiteSpace: 'pre',
   });
-  container.appendChild(pre);
+  wrapper.appendChild(pre);
 
   // ── sample canvas ──────────────────────────────────────────────────────
   const sampleCanvas = document.createElement('canvas');
@@ -258,16 +270,14 @@ function runCanvas2D(
 
   const getSize = () => {
     const { width, height } = container.getBoundingClientRect();
-    return { w: Math.max(width, 100), h: Math.max(height, 40) };
+    return { w: Math.max(width, 60), h: Math.max(height, 30) };
   };
 
   let { w, h } = getSize();
 
   const buildSample = (cw: number, ch: number) => {
-    sCtx.font = `${asciiFontSize}px Space Mono, monospace`;
-    const charW = sCtx.measureText('A').width;
-    const cols = Math.floor(cw / charW);
-    const rows = Math.floor(ch / asciiFontSize);
+    const cols = Math.max(1, Math.floor(cw / CHAR_W));
+    const rows = Math.max(1, Math.floor(ch / asciiFontSize));
 
     sampleCanvas.width  = cols;
     sampleCanvas.height = rows;
@@ -282,6 +292,8 @@ function runCanvas2D(
     const dy = (rows - dh) / 2;
 
     sCtx.clearRect(0, 0, cols, rows);
+    sCtx.imageSmoothingEnabled = true;
+    sCtx.imageSmoothingQuality = 'high';
     sCtx.drawImage(offscreen, dx, dy, dw, dh);
     return { cols, rows };
   };
@@ -307,6 +319,8 @@ function runCanvas2D(
       const dh = offscreen.height * scale;
       const dx = (cols - dw) / 2;
       const dy = (rows - dh) / 2;
+      sCtx.imageSmoothingEnabled = true;
+      sCtx.imageSmoothingQuality = 'high';
       sCtx.drawImage(offscreen, dx, dy, dw, dh);
     }
 
@@ -321,10 +335,12 @@ function runCanvas2D(
         const sc = Math.max(0, Math.min(cols - 1, srcCol));
         const i  = (sc + row * cols) * 4;
         const a  = img[i + 3];
-        if (a < 20) { str += ' '; continue; }
-        const gray = (0.3 * img[i] + 0.6 * img[i+1] + 0.1 * img[i+2]) / 255;
-        const idx  = CHARSET.length - 1 - Math.floor((1 - gray) * (CHARSET.length - 1));
-        str += CHARSET[Math.max(0, Math.min(CHARSET.length - 1, idx))];
+        if (a < 60) { str += ' '; continue; }
+        const hash = Math.abs(Math.sin(col * 127.1 + row * 311.7) * 43758.5) % 1;
+        const t = (a - 60) / 195;
+        const density = t * (0.5 + hash * 0.5);
+        const idx = Math.max(1, Math.round(density * (CHARSET.length - 1)));
+        str += CHARSET[idx];
       }
       str += '\n';
     }
@@ -346,7 +362,7 @@ function runCanvas2D(
   signal.addEventListener('abort', () => {
     cancelAnimationFrame(rafId);
     ro.disconnect();
-    if (pre.parentNode) container.removeChild(pre);
+    if (wrapper.parentNode) container.removeChild(wrapper);
   });
 }
 
@@ -383,24 +399,12 @@ export default function ASCIIText({
 
     const ac = new AbortController();
 
+    // Canvas2D path gives clean, stable letter shapes on all devices.
+    // Awaits Space Mono font load before measuring so character widths are exact.
     const run = async () => {
-      if (isWebGLAvailable()) {
-        try {
-          await runWebGL(container, text, asciiFontSize, textFontSize, textColor,
-            planeBaseHeight, enableWaves, gradientCss, ac.signal);
-        } catch {
-          // WebGL init failed at runtime — fall back
-          if (!ac.signal.aborted) {
-            runCanvas2D(container, text, asciiFontSize, textFontSize, textColor,
-              planeBaseHeight, enableWaves, gradientCss, ac.signal);
-          }
-        }
-      } else {
-        runCanvas2D(container, text, asciiFontSize, textFontSize, textColor,
-          planeBaseHeight, enableWaves, gradientCss, ac.signal);
-      }
+      await runCanvas2D(container, text, asciiFontSize, textFontSize, textColor,
+        planeBaseHeight, enableWaves, gradientCss, ac.signal);
     };
-
     run();
     return () => ac.abort();
   }, [text, asciiFontSize, textFontSize, textColor, planeBaseHeight, enableWaves, gradientCss]);

@@ -1,0 +1,441 @@
+/* ─── CardNav — ReactBits TS+CSS, Cybork HUD theme ───────────────────────── */
+
+.card-nav-container {
+  position: fixed;
+  top: 1.25em;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 760px;
+  z-index: 99;
+  box-sizing: border-box;
+}
+
+.card-nav {
+  display: block;
+  height: 60px;
+  padding: 0;
+  background: rgba(10, 11, 14, 0.92);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 0;
+  box-shadow:
+    0 32px 64px rgba(0, 0, 0, 0.6),
+    0 0 0 0.5px rgba(255, 255, 255, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  position: relative;
+  overflow: hidden;
+  will-change: height;
+  transition: box-shadow 0.3s ease;
+}
+
+.card-nav.open {
+  box-shadow:
+    0 40px 80px rgba(0, 0, 0, 0.7),
+    0 0 0 0.5px rgba(255, 255, 255, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+
+/* Scan-line texture */
+.card-nav::before,
+.card-nav::after {
+  content: '';
+  position: absolute;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* HUD corner brackets — top */
+.card-nav::before {
+  top: 3px; left: 3px;
+  width: 8px; height: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.28);
+  border-left: 1px solid rgba(255, 255, 255, 0.28);
+}
+.card-nav::after {
+  top: 3px; right: 3px;
+  width: 8px; height: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.28);
+  border-right: 1px solid rgba(255, 255, 255, 0.28);
+}
+
+/* bottom brackets */
+.card-nav-bracket-bl,
+.card-nav-bracket-br {
+  position: absolute;
+  width: 8px; height: 8px;
+  pointer-events: none;
+  z-index: 10;
+}
+.card-nav-bracket-bl {
+  bottom: 3px; left: 3px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.28);
+  border-left:   1px solid rgba(255, 255, 255, 0.28);
+}
+.card-nav-bracket-br {
+  bottom: 3px; right: 3px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.28);
+  border-right:  1px solid rgba(255, 255, 255, 0.28);
+}
+
+/* ── Top bar ─────────────────────────────────────────────────────────────── */
+.card-nav-top {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.45rem 0.45rem 0.45rem 1rem;
+  z-index: 2;
+}
+
+/* ── Hamburger ───────────────────────────────────────────────────────────── */
+.hamburger-menu {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  gap: 5px;
+  padding: 0 8px;
+  position: relative;
+}
+
+.hamburger-menu::before {
+  content: '';
+  position: absolute;
+  inset: 8px 2px;
+  border: 1px solid transparent;
+  transition: border-color 0.2s ease;
+}
+
+.hamburger-menu:hover::before {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.hamburger-line {
+  width: 22px;
+  height: 1.5px;
+  background-color: rgba(255, 255, 255, 0.8);
+  transition:
+    transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity   0.2s ease,
+    width     0.25s ease;
+  transform-origin: 50% 50%;
+}
+
+.hamburger-menu:hover .hamburger-line {
+  background-color: rgba(255, 255, 255, 1);
+}
+
+.hamburger-menu.open .hamburger-line:first-child {
+  transform: translateY(3.25px) rotate(45deg);
+}
+.hamburger-menu.open .hamburger-line:last-child {
+  transform: translateY(-3.25px) rotate(-45deg);
+}
+
+/* ── Logo container ──────────────────────────────────────────────────────── */
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.logo {
+  height: 24px;
+  width: 24px;
+  object-fit: contain;
+  mix-blend-mode: screen;
+}
+
+.logo-wordmark {
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.20em;
+  color: hsl(0 0% 90%);
+  white-space: nowrap;
+}
+
+/* ── CTA button ──────────────────────────────────────────────────────────── */
+.card-nav-cta-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  color: hsl(0 0% 90%);
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 0;
+  padding: 0 16px;
+  height: 36px;
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    box-shadow    0.25s ease,
+    border-color  0.25s ease,
+    background    0.25s ease;
+  white-space: nowrap;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.card-nav-cta-button::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.card-nav-cta-button:hover {
+  background: rgba(255, 255, 255, 0.10);
+  border-color: rgba(200, 160, 60, 0.55);
+  box-shadow:
+    0 0 22px rgba(200, 160, 60, 0.28),
+    0 0 6px  rgba(200, 160, 60, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.card-nav-cta-button:hover::before {
+  opacity: 1;
+}
+
+/* ── Expanded content area ───────────────────────────────────────────────── */
+.card-nav-content {
+  position: absolute;
+  left: 0; right: 0;
+  top: 60px; bottom: 0;
+  padding: 0 8px 8px;
+  display: flex;
+  align-items: stretch;
+  gap: 6px;
+  visibility: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.card-nav.open .card-nav-content {
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* ── Nav cards ───────────────────────────────────────────────────────────── */
+.nav-card {
+  height: 100%;
+  flex: 1 1 0;
+  min-width: 0;
+  border-radius: 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  gap: 0;
+  user-select: none;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  overflow: hidden;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.nav-card:hover {
+  border-color: rgba(255, 255, 255, 0.13);
+  box-shadow: 0 0 28px rgba(0, 0, 0, 0.5);
+}
+
+/* Scan-line texture */
+.nav-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent, transparent 1px,
+    rgba(0, 0, 0, 0.06) 1px,
+    rgba(0, 0, 0, 0.06) 2px
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Top accent bar — unique colour per card via nth-child */
+.nav-card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--card-accent, rgba(100, 106, 118, 0.6));
+  opacity: 0.7;
+  pointer-events: none;
+  z-index: 2;
+  transition: opacity 0.25s ease;
+}
+
+.nav-card:hover::after {
+  opacity: 1;
+}
+
+.nav-card:nth-child(1) { --card-accent: linear-gradient(90deg, rgba(100,149,237,0.8) 0%, rgba(80,120,200,0.3) 100%); }
+.nav-card:nth-child(2) { --card-accent: linear-gradient(90deg, rgba(127,255,127,0.5) 0%, rgba(80,200,80,0.2) 100%); }
+.nav-card:nth-child(3) { --card-accent: linear-gradient(90deg, rgba(255,165,0,0.6) 0%, rgba(200,120,0,0.2) 100%); }
+
+/* Inner layout wrapper */
+.nav-card-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 16px 18px 14px;
+  gap: 0;
+}
+
+/* Corner bracket (top-left) */
+.nav-card-corner-tl {
+  position: absolute;
+  top: 10px; left: 10px;
+  width: 8px; height: 8px;
+  border-top: 1px solid rgba(255,255,255,0.2);
+  border-left: 1px solid rgba(255,255,255,0.2);
+  pointer-events: none;
+  z-index: 3;
+  transition: border-color 0.25s ease;
+}
+
+.nav-card:hover .nav-card-corner-tl {
+  border-color: rgba(255,255,255,0.35);
+}
+
+/* Corner bracket (bottom-right) */
+.nav-card-corner-br {
+  position: absolute;
+  bottom: 10px; right: 10px;
+  width: 8px; height: 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+  border-right: 1px solid rgba(255,255,255,0.2);
+  pointer-events: none;
+  z-index: 3;
+  transition: border-color 0.25s ease;
+}
+
+.nav-card:hover .nav-card-corner-br {
+  border-color: rgba(255,255,255,0.35);
+}
+
+.nav-card-label {
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.35);
+  line-height: 1;
+  margin-bottom: 10px;
+}
+
+.nav-card-divider {
+  height: 1px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.07) 0%, transparent 100%);
+  margin-bottom: 12px;
+  flex-shrink: 0;
+}
+
+.nav-card-links {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.nav-card-link {
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.18s ease, padding-left 0.18s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: rgba(255, 255, 255, 0.60);
+  letter-spacing: 0.02em;
+  position: relative;
+}
+
+.nav-card-link:hover {
+  color: rgba(255, 255, 255, 1);
+  padding-left: 4px;
+}
+
+.nav-card-link-icon {
+  opacity: 0.4;
+  flex-shrink: 0;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.nav-card-link:hover .nav-card-link-icon {
+  opacity: 0.85;
+  transform: translate(2px, -2px);
+}
+
+/* ── Mobile ──────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .card-nav-container {
+    width: 92%;
+    top: 1em;
+  }
+
+  .card-nav-top {
+    padding: 0.45rem 0.6rem;
+  }
+
+  .hamburger-menu {
+    order: 2;
+  }
+
+  .logo-container {
+    position: static;
+    transform: none;
+    order: 1;
+  }
+
+  .card-nav-cta-button {
+    display: none;
+  }
+
+  .card-nav-content {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+    padding: 0 6px 6px;
+    justify-content: flex-start;
+  }
+
+  .nav-card {
+    height: auto;
+    min-height: 64px;
+    flex: 1 1 auto;
+    max-height: none;
+  }
+
+  .nav-card-label {
+    font-size: 9px;
+    margin-bottom: 8px;
+  }
+
+  .nav-card-link {
+    font-size: 12px;
+  }
+}

@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { SiDiscord } from "react-icons/si";
 import { NoiseBackground } from "@/components/NoiseBackground";
+import ASCIIText from "@/components/ASCIIText";
 import logoUrl from "@assets/5e491840e325ffc189450199e39413a5_1780984645568.webp";
 
 const DISCORD_INVITE = "https://discord.com/oauth2/authorize";
@@ -402,22 +403,24 @@ function Hero() {
           </span>
         </motion.div>
 
-        <motion.h1
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.22 }}
-          style={{
-            fontSize: "clamp(2rem, 6vw, 3rem)",
-            fontWeight: 700,
-            color: "hsl(0 0% 95%)",
-            letterSpacing: "-0.03em",
-            lineHeight: 1.1,
-            marginBottom: "16px",
-            fontFamily: "var(--app-font-sans)",
-          }}
+        {/* ASCIIText headline — ReactBits TS+CSS */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.7, delay: 0.22 }}
+          style={{ width: "100%", height: "120px", marginBottom: "16px", position: "relative" }}
+          aria-label="Your server, upgraded."
         >
-          Your server, upgraded.
-        </motion.h1>
+          <ASCIIText
+            text="Your server, upgraded."
+            asciiFontSize={7}
+            textFontSize={110}
+            textColor="#ffffff"
+            planeBaseHeight={7}
+            enableWaves={true}
+            gradientCss="linear-gradient(135deg, rgba(200,160,60,1) 0%, rgba(127,255,127,0.9) 100%)"
+          />
+        </motion.div>
 
         <motion.p
           initial={{ opacity: 0, y: 10 }}

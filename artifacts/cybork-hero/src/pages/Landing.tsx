@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import CardNav from "@/components/CardNav";
+import { useIsMobile } from "@/hooks/use-mobile";
 import {
   Shield,
   Music,
@@ -347,6 +348,10 @@ function AnimatedCoordinates() {
 }
 
 function Hero() {
+  const isMobile = useIsMobile();
+  const asciiFontSize = isMobile ? 5 : 10;
+  const asciiHeight   = isMobile ? 120 : 160;
+
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center px-4 pt-16 overflow-hidden">
       <HUDCard className="w-full max-w-lg mt-8 text-center p-5 sm:p-10">
@@ -383,13 +388,13 @@ function Hero() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.7, delay: 0.14 }}
-          style={{ width: "100%", height: "160px", marginBottom: "4px", position: "relative" }}
+          style={{ width: "100%", height: `${asciiHeight}px`, marginBottom: "4px", position: "relative" }}
           aria-label="CYBORK"
         >
           <ASCIIText
             text="CYBORK"
-            asciiFontSize={10}
-            textFontSize={300}
+            asciiFontSize={asciiFontSize}
+            textFontSize={isMobile ? 200 : 300}
             textColor="#ffffff"
             planeBaseHeight={9}
             enableWaves={true}

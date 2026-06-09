@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/cybork-hero/"
+title = "Cybork — Hero Section"
+version = "1.0.0"
+id = "artifacts/cybork-hero"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/cybork-hero/" ]
+localPort = 21882
+
+[services.development]
+run = "pnpm --filter @workspace/cybork-hero run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/cybork-hero", "run", "build" ]
+publicDir = "artifacts/cybork-hero/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "21882"
+BASE_PATH = "/cybork-hero/"

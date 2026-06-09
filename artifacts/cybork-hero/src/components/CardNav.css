@@ -1,0 +1,363 @@
+/* ─── CardNav — ReactBits TS+CSS, Cybork HUD theme ───────────────────────── */
+
+.card-nav-container {
+  position: fixed;
+  top: 1.25em;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 760px;
+  z-index: 99;
+  box-sizing: border-box;
+}
+
+/* Match HUDCard corner-bracket style — square corners on the nav card */
+
+.card-nav {
+  display: block;
+  height: 60px;
+  padding: 0;
+  background: rgba(15, 17, 20, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0;
+  box-shadow:
+    0 24px 48px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  position: relative;
+  overflow: hidden;
+  will-change: height;
+
+  /* Scan-line texture — same as HUDCard */
+  background-image:
+    linear-gradient(
+      rgba(15, 17, 20, 0.85) 0%,
+      rgba(15, 17, 20, 0.85) 100%
+    ),
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 1px,
+      rgba(0, 0, 0, 0.05) 1px,
+      rgba(0, 0, 0, 0.05) 2px
+    );
+}
+
+/* ── HUD corner brackets ─────────────────────────────────────────────────── */
+.card-nav::before,
+.card-nav::after {
+  content: '';
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.card-nav::before {
+  top: 3px;
+  left: 3px;
+  border-top: 1px solid rgba(255, 255, 255, 0.22);
+  border-left: 1px solid rgba(255, 255, 255, 0.22);
+}
+
+.card-nav::after {
+  top: 3px;
+  right: 3px;
+  border-top: 1px solid rgba(255, 255, 255, 0.22);
+  border-right: 1px solid rgba(255, 255, 255, 0.22);
+}
+
+/* bottom brackets via inner elements */
+.card-nav-bracket-bl,
+.card-nav-bracket-br {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.card-nav-bracket-bl {
+  bottom: 3px;
+  left: 3px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.22);
+  border-left: 1px solid rgba(255, 255, 255, 0.22);
+}
+
+.card-nav-bracket-br {
+  bottom: 3px;
+  right: 3px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.22);
+  border-right: 1px solid rgba(255, 255, 255, 0.22);
+}
+
+/* ── Top bar ─────────────────────────────────────────────────────────────── */
+.card-nav-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.45rem 0.45rem 0.45rem 1rem;
+  z-index: 2;
+}
+
+/* ── Hamburger ───────────────────────────────────────────────────────────── */
+.hamburger-menu {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  gap: 5px;
+  padding: 0 6px;
+}
+
+.hamburger-menu:hover .hamburger-line {
+  opacity: 0.6;
+}
+
+.hamburger-line {
+  width: 22px;
+  height: 1.5px;
+  background-color: rgba(255, 255, 255, 0.75);
+  transition:
+    transform 0.25s ease,
+    opacity 0.2s ease;
+  transform-origin: 50% 50%;
+}
+
+.hamburger-menu.open .hamburger-line:first-child {
+  transform: translateY(3.25px) rotate(45deg);
+}
+
+.hamburger-menu.open .hamburger-line:last-child {
+  transform: translateY(-3.25px) rotate(-45deg);
+}
+
+/* ── Logo container ──────────────────────────────────────────────────────── */
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.logo {
+  height: 24px;
+  width: 24px;
+  object-fit: contain;
+  mix-blend-mode: screen;
+}
+
+.logo-wordmark {
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  color: hsl(0 0% 90%);
+  white-space: nowrap;
+}
+
+/* ── CTA button ──────────────────────────────────────────────────────────── */
+.card-nav-cta-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.07);
+  color: hsl(0 0% 90%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  padding: 0 14px;
+  height: 36px;
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    box-shadow 0.25s ease,
+    border-color 0.25s ease,
+    background 0.25s ease;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.card-nav-cta-button:hover {
+  background: rgba(255, 255, 255, 0.10);
+  border-color: rgba(200, 160, 60, 0.5);
+  box-shadow:
+    0 0 18px rgba(200, 160, 60, 0.32),
+    0 0 6px rgba(200, 160, 60, 0.18);
+}
+
+/* ── Expanded content area ───────────────────────────────────────────────── */
+.card-nav-content {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 60px;
+  bottom: 0;
+  padding: 0 6px 6px;
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  visibility: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.card-nav.open .card-nav-content {
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* ── Nav cards (expanded panels) ─────────────────────────────────────────── */
+.nav-card {
+  height: 100%;
+  flex: 1 1 0;
+  min-width: 0;
+  border-radius: 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 14px 16px;
+  gap: 8px;
+  user-select: none;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  overflow: hidden;
+
+  /* Scan-line texture on sub-cards too */
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 1px,
+      rgba(0, 0, 0, 0.04) 1px,
+      rgba(0, 0, 0, 0.04) 2px
+    );
+}
+
+/* Bottom corner brackets on each nav card */
+.nav-card::after {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  width: 6px;
+  height: 6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+  border-right: 1px solid rgba(255, 255, 255, 0.18);
+  pointer-events: none;
+}
+
+.nav-card::before {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 6px;
+  height: 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+  border-left: 1px solid rgba(255, 255, 255, 0.18);
+  pointer-events: none;
+}
+
+.nav-card-label {
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1;
+}
+
+.nav-card-links {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nav-card-link {
+  font-family: 'Space Mono', 'JetBrains Mono', Menlo, monospace;
+  font-size: 12px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.2s ease, opacity 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: rgba(255, 255, 255, 0.78);
+  letter-spacing: 0.02em;
+}
+
+.nav-card-link:hover {
+  color: rgba(255, 255, 255, 1);
+  opacity: 1;
+}
+
+.nav-card-link-icon {
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+
+/* ── Mobile ──────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .card-nav-container {
+    width: 92%;
+    top: 1em;
+  }
+
+  .card-nav-top {
+    padding: 0.45rem 0.6rem;
+  }
+
+  .hamburger-menu {
+    order: 2;
+  }
+
+  .logo-container {
+    position: static;
+    transform: none;
+    order: 1;
+  }
+
+  .card-nav-cta-button {
+    display: none;
+  }
+
+  .card-nav-content {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+    padding: 0 6px 6px;
+    justify-content: flex-start;
+  }
+
+  .nav-card {
+    height: auto;
+    min-height: 60px;
+    flex: 1 1 auto;
+    max-height: none;
+  }
+
+  .nav-card-label {
+    font-size: 13px;
+  }
+
+  .nav-card-link {
+    font-size: 12px;
+  }
+}

@@ -17,6 +17,7 @@ import {
   Bot,
 } from "lucide-react";
 import { SiDiscord } from "react-icons/si";
+import { FireBackground } from "@/components/FireBackground";
 
 const DISCORD_INVITE = "https://discord.com/oauth2/authorize";
 
@@ -768,14 +769,17 @@ function Footer() {
 /* ─── Page ───────────────────────────────────────────────────────────────── */
 export default function Landing() {
   return (
-    <div className="min-h-screen" style={{ background: "hsl(30 5% 7%)" }}>
-      <Nav />
-      <Hero />
-      <Features />
-      <Commands />
-      <Stats />
-      <CTA />
-      <Footer />
+    <div className="relative min-h-screen" style={{ background: "hsl(30 5% 7%)" }}>
+      <FireBackground opacity={0.44} />
+      <div className="relative" style={{ zIndex: 1 }}>
+        <Nav />
+        <Hero />
+        <Features />
+        <Commands />
+        <Stats />
+        <CTA />
+        <Footer />
+      </div>
     </div>
   );
 }

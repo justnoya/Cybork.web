@@ -102,9 +102,9 @@
   --popover-foreground: 0 0% 92%;
   --popover-border: 0 0% 17%;
 
-  /* Primary — amber/warm gold accent */
-  --primary: 35 75% 52%;
-  --primary-foreground: 0 0% 5%;
+  /* Primary — near-white */
+  --primary: 0 0% 90%;
+  --primary-foreground: 0 0% 8%;
 
   /* Secondary — dark gray elevated */
   --secondary: 30 4% 17%;
@@ -114,9 +114,9 @@
   --muted: 30 4% 14%;
   --muted-foreground: 0 0% 50%;
 
-  /* Accent = primary */
-  --accent: 35 75% 52%;
-  --accent-foreground: 0 0% 5%;
+  /* Accent = white/gray */
+  --accent: 0 0% 88%;
+  --accent-foreground: 0 0% 8%;
 
   /* Destructive */
   --destructive: 0 70% 50%;

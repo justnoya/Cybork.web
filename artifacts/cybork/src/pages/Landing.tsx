@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   Shield,
   Music,
@@ -20,11 +20,23 @@ import { SiDiscord } from "react-icons/si";
 
 const DISCORD_INVITE = "https://discord.com/oauth2/authorize";
 
-/* ─── Stacked Card Wrapper ──────────────────────────────────────────────────
-   Replicates the layered card aesthetic from the reference design:
-   - Two ghost cards visible behind the main card (rotated, offset)
-   - Main card sits on top, flat, full content
-*/
+/* ─── Accent palette ─────────────────────────────────────────────────────── */
+const ACCENT = {
+  iconBg:     "rgba(255, 255, 255, 0.07)",
+  iconBorder: "rgba(255, 255, 255, 0.13)",
+  badgeBg:    "rgba(255, 255, 255, 0.06)",
+  badgeBorder:"rgba(255, 255, 255, 0.11)",
+  checkBg:    "rgba(255, 255, 255, 0.08)",
+  checkBorder:"rgba(255, 255, 255, 0.14)",
+  pillBg:     "rgba(255, 255, 255, 0.06)",
+  pillBorder: "rgba(255, 255, 255, 0.10)",
+  icon:       "hsl(0 0% 78%)",   /* icon color */
+  label:      "hsl(0 0% 52%)",   /* section labels */
+  badge:      "hsl(0 0% 60%)",   /* badge text */
+  prefix:     "hsl(0 0% 58%)",   /* /command prefix */
+};
+
+/* ─── Stacked Card Wrapper ───────────────────────────────────────────────── */
 function CardStack({
   children,
   className = "",
@@ -62,7 +74,7 @@ function CardStack({
           zIndex: 1,
         }}
       />
-      {/* Front card — content */}
+      {/* Front card */}
       <div
         className="relative rounded-2xl"
         style={{
@@ -77,7 +89,7 @@ function CardStack({
   );
 }
 
-/* ─── Small Feature Card (no stack effect) ──────────────────────────────── */
+/* ─── Feature Card ───────────────────────────────────────────────────────── */
 function FeatureCard({
   icon: Icon,
   title,
@@ -104,17 +116,14 @@ function FeatureCard({
       <div
         className="w-10 h-10 rounded-xl flex items-center justify-center"
         style={{
-          background: "rgba(200, 140, 40, 0.12)",
-          border: "1px solid rgba(200, 140, 40, 0.2)",
+          background: ACCENT.iconBg,
+          border: `1px solid ${ACCENT.iconBorder}`,
         }}
       >
-        <Icon size={18} className="text-amber-400" />
+        <Icon size={18} style={{ color: ACCENT.icon }} />
       </div>
       <div>
-        <h3
-          className="text-sm font-semibold mb-1.5"
-          style={{ color: "hsl(0 0% 92%)" }}
-        >
+        <h3 className="text-sm font-semibold mb-1.5" style={{ color: "hsl(0 0% 92%)" }}>
           {title}
         </h3>
         <p className="text-xs leading-relaxed" style={{ color: "hsl(0 0% 48%)" }}>
@@ -126,15 +135,7 @@ function FeatureCard({
 }
 
 /* ─── Stat Item ──────────────────────────────────────────────────────────── */
-function StatItem({
-  value,
-  label,
-  delay = 0,
-}: {
-  value: string;
-  label: string;
-  delay?: number;
-}) {
+function StatItem({ value, label, delay = 0 }: { value: string; label: string; delay?: number }) {
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
@@ -143,10 +144,7 @@ function StatItem({
       transition={{ duration: 0.4, delay }}
       className="flex flex-col items-center gap-1"
     >
-      <span
-        className="text-3xl font-bold tracking-tight"
-        style={{ color: "hsl(0 0% 94%)" }}
-      >
+      <span className="text-3xl font-bold tracking-tight" style={{ color: "hsl(0 0% 94%)" }}>
         {value}
       </span>
       <span className="text-xs" style={{ color: "hsl(0 0% 46%)" }}>
@@ -180,25 +178,19 @@ function CommandLine({
       <span
         className="font-mono text-xs px-2 py-0.5 rounded"
         style={{
-          background: "rgba(200, 140, 40, 0.1)",
-          color: "hsl(35 75% 58%)",
-          border: "1px solid rgba(200, 140, 40, 0.18)",
+          background: ACCENT.pillBg,
+          color: ACCENT.prefix,
+          border: `1px solid ${ACCENT.pillBorder}`,
           minWidth: "28px",
           textAlign: "center",
         }}
       >
         {prefix}
       </span>
-      <span
-        className="font-mono text-sm font-medium"
-        style={{ color: "hsl(0 0% 85%)" }}
-      >
+      <span className="font-mono text-sm font-medium" style={{ color: "hsl(0 0% 85%)" }}>
         {command}
       </span>
-      <span
-        className="ml-auto text-xs hidden sm:block"
-        style={{ color: "hsl(0 0% 40%)" }}
-      >
+      <span className="ml-auto text-xs hidden sm:block" style={{ color: "hsl(0 0% 38%)" }}>
         {description}
       </span>
     </motion.div>
@@ -222,13 +214,9 @@ function Nav() {
       transition={{ duration: 0.5 }}
       className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-10 h-16 transition-all duration-300"
       style={{
-        background: scrolled
-          ? "rgba(19, 16, 13, 0.88)"
-          : "transparent",
+        background: scrolled ? "rgba(18, 16, 14, 0.88)" : "transparent",
         backdropFilter: scrolled ? "blur(16px)" : "none",
-        borderBottom: scrolled
-          ? "1px solid rgba(255,255,255,0.07)"
-          : "none",
+        borderBottom: scrolled ? "1px solid rgba(255,255,255,0.07)" : "none",
       }}
     >
       {/* Logo */}
@@ -236,11 +224,11 @@ function Nav() {
         <div
           className="w-8 h-8 rounded-lg flex items-center justify-center"
           style={{
-            background: "rgba(200, 140, 40, 0.14)",
-            border: "1px solid rgba(200, 140, 40, 0.22)",
+            background: ACCENT.iconBg,
+            border: `1px solid ${ACCENT.iconBorder}`,
           }}
         >
-          <Bot size={16} className="text-amber-400" />
+          <Bot size={15} style={{ color: ACCENT.icon }} />
         </div>
         <span className="font-semibold text-sm tracking-wide" style={{ color: "hsl(0 0% 90%)" }}>
           CYBORK
@@ -254,7 +242,7 @@ function Nav() {
             key={item}
             href={`#${item.toLowerCase()}`}
             className="text-xs font-medium transition-colors duration-150 hover:text-white"
-            style={{ color: "hsl(0 0% 50%)" }}
+            style={{ color: "hsl(0 0% 48%)" }}
           >
             {item}
           </a>
@@ -267,8 +255,8 @@ function Nav() {
         data-testid="nav-invite-button"
         className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-200 hover:opacity-90 active:scale-95"
         style={{
-          background: "hsl(35 75% 52%)",
-          color: "hsl(0 0% 5%)",
+          background: "hsl(0 0% 90%)",
+          color: "hsl(0 0% 8%)",
         }}
       >
         <SiDiscord size={13} />
@@ -278,16 +266,16 @@ function Nav() {
   );
 }
 
-/* ─── Hero Section ───────────────────────────────────────────────────────── */
+/* ─── Hero ───────────────────────────────────────────────────────────────── */
 function Hero() {
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center px-4 pt-16 overflow-hidden">
-      {/* Ambient glow — warm amber, top center */}
+      {/* Ambient glow — very subtle cool-neutral at top */}
       <div
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "radial-gradient(ellipse 60% 42% at 50% 0%, rgba(165, 105, 22, 0.30) 0%, transparent 100%)",
+            "radial-gradient(ellipse 60% 42% at 50% 0%, rgba(210, 215, 230, 0.07) 0%, transparent 100%)",
         }}
       />
 
@@ -300,9 +288,9 @@ function Hero() {
             transition={{ duration: 0.4, delay: 0.1 }}
             className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium mb-8"
             style={{
-              background: "rgba(200, 140, 40, 0.1)",
-              border: "1px solid rgba(200, 140, 40, 0.2)",
-              color: "hsl(35 70% 62%)",
+              background: ACCENT.badgeBg,
+              border: `1px solid ${ACCENT.badgeBorder}`,
+              color: ACCENT.badge,
             }}
           >
             <Zap size={11} />
@@ -319,14 +307,14 @@ function Hero() {
             <div
               className="w-11 h-11 rounded-xl flex items-center justify-center"
               style={{
-                background: "rgba(200, 140, 40, 0.13)",
-                border: "1px solid rgba(200, 140, 40, 0.22)",
+                background: ACCENT.iconBg,
+                border: `1px solid ${ACCENT.iconBorder}`,
               }}
             >
-              <Bot size={20} className="text-amber-400" />
+              <Bot size={20} style={{ color: ACCENT.icon }} />
             </div>
             <span
-              className="text-3xl font-bold tracking-widest"
+              className="text-3xl font-bold"
               style={{ color: "hsl(0 0% 94%)", letterSpacing: "0.14em" }}
             >
               CYBORK
@@ -368,8 +356,8 @@ function Hero() {
               data-testid="hero-invite-button"
               className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold transition-all duration-200 hover:opacity-90 active:scale-95"
               style={{
-                background: "hsl(35 75% 52%)",
-                color: "hsl(0 0% 5%)",
+                background: "hsl(0 0% 90%)",
+                color: "hsl(0 0% 7%)",
               }}
             >
               <SiDiscord size={15} />
@@ -380,9 +368,9 @@ function Hero() {
               data-testid="hero-features-link"
               className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl text-sm font-medium transition-all duration-200"
               style={{
-                background: "rgba(255,255,255,0.055)",
+                background: "rgba(255,255,255,0.05)",
                 border: "1px solid rgba(255,255,255,0.09)",
-                color: "hsl(0 0% 70%)",
+                color: "hsl(0 0% 65%)",
               }}
             >
               Explore features
@@ -403,14 +391,14 @@ function Hero() {
           animate={{ y: [0, 6, 0] }}
           transition={{ repeat: Infinity, duration: 1.8, ease: "easeInOut" }}
         >
-          <ChevronDown size={18} style={{ color: "hsl(0 0% 30%)" }} />
+          <ChevronDown size={18} style={{ color: "hsl(0 0% 28%)" }} />
         </motion.div>
       </motion.div>
     </section>
   );
 }
 
-/* ─── Features Section ───────────────────────────────────────────────────── */
+/* ─── Features ───────────────────────────────────────────────────────────── */
 const FEATURES = [
   {
     icon: Shield,
@@ -453,29 +441,17 @@ const FEATURES = [
 function Features() {
   return (
     <section id="features" className="relative px-4 py-24">
-      {/* Subtle background glow */}
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(ellipse 50% 30% at 50% 50%, rgba(120, 75, 10, 0.1) 0%, transparent 100%)",
-        }}
-      />
-
       <div className="max-w-3xl mx-auto">
-        {/* Section header as card stack */}
+        {/* Section header */}
         <CardStack className="mb-12">
           <div className="px-8 py-8 text-center">
             <p
               className="text-xs font-semibold uppercase tracking-widest mb-3"
-              style={{ color: "hsl(35 65% 55%)" }}
+              style={{ color: ACCENT.label }}
             >
               Capabilities
             </p>
-            <h2
-              className="text-xl font-semibold"
-              style={{ color: "hsl(0 0% 92%)" }}
-            >
+            <h2 className="text-xl font-semibold" style={{ color: "hsl(0 0% 92%)" }}>
               Everything your server needs
             </h2>
             <p
@@ -498,16 +474,16 @@ function Features() {
   );
 }
 
-/* ─── Commands Section ───────────────────────────────────────────────────── */
+/* ─── Commands ───────────────────────────────────────────────────────────── */
 const COMMANDS = [
-  { prefix: "/", command: "ban @user [reason]", description: "Permanently ban a member" },
-  { prefix: "/", command: "warn @user [reason]", description: "Issue a formal warning" },
-  { prefix: "/", command: "play [song/url]", description: "Stream audio in voice" },
-  { prefix: "/", command: "queue", description: "View the playback queue" },
-  { prefix: "/", command: "rank [@user]", description: "Display rank card" },
-  { prefix: "/", command: "leaderboard", description: "Top members by XP" },
-  { prefix: "/", command: "balance [@user]", description: "Check coin balance" },
-  { prefix: "/", command: "ticket create", description: "Open a support ticket" },
+  { prefix: "/", command: "ban @user [reason]",   description: "Permanently ban a member" },
+  { prefix: "/", command: "warn @user [reason]",  description: "Issue a formal warning" },
+  { prefix: "/", command: "play [song/url]",      description: "Stream audio in voice" },
+  { prefix: "/", command: "queue",                description: "View the playback queue" },
+  { prefix: "/", command: "rank [@user]",         description: "Display rank card" },
+  { prefix: "/", command: "leaderboard",          description: "Top members by XP" },
+  { prefix: "/", command: "balance [@user]",      description: "Check coin balance" },
+  { prefix: "/", command: "ticket create",        description: "Open a support ticket" },
 ];
 
 function Commands() {
@@ -521,20 +497,17 @@ function Commands() {
               <div
                 className="w-9 h-9 rounded-xl flex items-center justify-center"
                 style={{
-                  background: "rgba(200, 140, 40, 0.1)",
-                  border: "1px solid rgba(200, 140, 40, 0.18)",
+                  background: ACCENT.iconBg,
+                  border: `1px solid ${ACCENT.iconBorder}`,
                 }}
               >
-                <Terminal size={16} className="text-amber-400" />
+                <Terminal size={16} style={{ color: ACCENT.icon }} />
               </div>
               <div>
-                <h2
-                  className="text-base font-semibold"
-                  style={{ color: "hsl(0 0% 92%)" }}
-                >
+                <h2 className="text-base font-semibold" style={{ color: "hsl(0 0% 92%)" }}>
                   Commands
                 </h2>
-                <p className="text-xs" style={{ color: "hsl(0 0% 46%)" }}>
+                <p className="text-xs" style={{ color: "hsl(0 0% 44%)" }}>
                   Slash commands, always up to date
                 </p>
               </div>
@@ -548,16 +521,13 @@ function Commands() {
             </div>
 
             {/* Footer note */}
-            <p
-              className="text-xs mt-5 text-center"
-              style={{ color: "hsl(0 0% 35%)" }}
-            >
+            <p className="text-xs mt-5 text-center" style={{ color: "hsl(0 0% 33%)" }}>
               + 80 more commands — use{" "}
               <span
                 className="font-mono px-1.5 py-0.5 rounded"
                 style={{
                   background: "rgba(255,255,255,0.06)",
-                  color: "hsl(0 0% 60%)",
+                  color: "hsl(0 0% 58%)",
                 }}
               >
                 /help
@@ -571,19 +541,10 @@ function Commands() {
   );
 }
 
-/* ─── Stats Section ──────────────────────────────────────────────────────── */
+/* ─── Stats ──────────────────────────────────────────────────────────────── */
 function Stats() {
   return (
     <section id="stats" className="relative px-4 py-24">
-      {/* Ambient glow */}
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(ellipse 40% 28% at 50% 50%, rgba(140, 85, 12, 0.12) 0%, transparent 100%)",
-        }}
-      />
-
       <div className="max-w-2xl mx-auto">
         <CardStack>
           <div className="px-8 py-10">
@@ -591,45 +552,36 @@ function Stats() {
             <div className="text-center mb-10">
               <p
                 className="text-xs font-semibold uppercase tracking-widest mb-2"
-                style={{ color: "hsl(35 65% 55%)" }}
+                style={{ color: ACCENT.label }}
               >
                 By the numbers
               </p>
-              <h2
-                className="text-xl font-semibold"
-                style={{ color: "hsl(0 0% 92%)" }}
-              >
+              <h2 className="text-xl font-semibold" style={{ color: "hsl(0 0% 92%)" }}>
                 Trusted by communities worldwide
               </h2>
             </div>
 
             {/* Stats grid */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-8">
-              <StatItem value="1.2K+" label="Servers" delay={0} />
-              <StatItem value="48K+" label="Members reached" delay={0.07} />
-              <StatItem value="2.1M+" label="Commands run" delay={0.14} />
-              <StatItem value="99.9%" label="Uptime" delay={0.21} />
+              <StatItem value="1.2K+" label="Servers"         delay={0} />
+              <StatItem value="48K+"  label="Members reached" delay={0.07} />
+              <StatItem value="2.1M+" label="Commands run"    delay={0.14} />
+              <StatItem value="99.9%" label="Uptime"          delay={0.21} />
             </div>
 
             {/* Divider */}
-            <div
-              className="my-8"
-              style={{
-                height: "1px",
-                background: "rgba(255,255,255,0.06)",
-              }}
-            />
+            <div className="my-8" style={{ height: "1px", background: "rgba(255,255,255,0.06)" }} />
 
             {/* Trust marks */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
               {[
-                { icon: Star, label: "5-star rated" },
-                { icon: Zap, label: "< 50ms latency" },
+                { icon: Star,  label: "5-star rated" },
+                { icon: Zap,   label: "< 50ms latency" },
                 { icon: Users, label: "Active community" },
               ].map(({ icon: Icon, label }) => (
                 <div key={label} className="flex items-center gap-2">
-                  <Icon size={13} className="text-amber-400" />
-                  <span className="text-xs" style={{ color: "hsl(0 0% 50%)" }}>
+                  <Icon size={13} style={{ color: ACCENT.icon }} />
+                  <span className="text-xs" style={{ color: "hsl(0 0% 48%)" }}>
                     {label}
                   </span>
                 </div>
@@ -642,7 +594,7 @@ function Stats() {
   );
 }
 
-/* ─── CTA Section ────────────────────────────────────────────────────────── */
+/* ─── CTA ────────────────────────────────────────────────────────────────── */
 const PLAN_FEATURES = [
   "Unlimited moderation actions",
   "Music streaming & queue",
@@ -655,12 +607,12 @@ const PLAN_FEATURES = [
 function CTA() {
   return (
     <section className="relative px-4 py-24 pb-32">
-      {/* Warm glow at bottom */}
+      {/* Subtle cool glow at bottom */}
       <div
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "radial-gradient(ellipse 55% 40% at 50% 100%, rgba(165, 105, 22, 0.22) 0%, transparent 100%)",
+            "radial-gradient(ellipse 55% 40% at 50% 100%, rgba(210, 215, 230, 0.05) 0%, transparent 100%)",
         }}
       />
 
@@ -675,11 +627,11 @@ function CTA() {
               transition={{ duration: 0.4 }}
               className="inline-flex w-14 h-14 rounded-2xl items-center justify-center mb-7"
               style={{
-                background: "rgba(200, 140, 40, 0.12)",
-                border: "1px solid rgba(200, 140, 40, 0.2)",
+                background: ACCENT.iconBg,
+                border: `1px solid ${ACCENT.iconBorder}`,
               }}
             >
-              <SiDiscord size={24} className="text-amber-400" />
+              <SiDiscord size={24} style={{ color: ACCENT.icon }} />
             </motion.div>
 
             <motion.h2
@@ -725,13 +677,13 @@ function CTA() {
                   <div
                     className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0"
                     style={{
-                      background: "rgba(200, 140, 40, 0.15)",
-                      border: "1px solid rgba(200, 140, 40, 0.25)",
+                      background: ACCENT.checkBg,
+                      border: `1px solid ${ACCENT.checkBorder}`,
                     }}
                   >
-                    <Check size={9} className="text-amber-400" />
+                    <Check size={9} style={{ color: ACCENT.icon }} />
                   </div>
-                  <span className="text-xs" style={{ color: "hsl(0 0% 65%)" }}>
+                  <span className="text-xs" style={{ color: "hsl(0 0% 62%)" }}>
                     {feat}
                   </span>
                 </motion.li>
@@ -748,20 +700,20 @@ function CTA() {
               data-testid="cta-invite-button"
               className="flex items-center justify-center gap-2.5 w-full py-3.5 rounded-xl text-sm font-semibold transition-all duration-200 hover:opacity-90 active:scale-[0.98]"
               style={{
-                background: "hsl(35 75% 52%)",
-                color: "hsl(0 0% 5%)",
+                background: "hsl(0 0% 90%)",
+                color: "hsl(0 0% 7%)",
               }}
             >
               <SiDiscord size={16} />
               Add Cybork to Discord — Free
             </motion.a>
 
-            <p className="text-xs mt-4" style={{ color: "hsl(0 0% 30%)" }}>
+            <p className="text-xs mt-4" style={{ color: "hsl(0 0% 28%)" }}>
               Takes 10 seconds.{" "}
               <a
                 href="#"
                 className="underline transition-colors hover:text-white"
-                style={{ color: "hsl(0 0% 40%)" }}
+                style={{ color: "hsl(0 0% 38%)" }}
               >
                 Privacy policy
               </a>
@@ -785,12 +737,15 @@ function Footer() {
     >
       <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-2">
-          <Bot size={14} className="text-amber-500 opacity-70" />
-          <span className="text-xs font-semibold tracking-widest opacity-40" style={{ color: "hsl(0 0% 80%)" }}>
+          <Bot size={14} style={{ color: ACCENT.icon, opacity: 0.6 }} />
+          <span
+            className="text-xs font-semibold tracking-widest"
+            style={{ color: "hsl(0 0% 35%)" }}
+          >
             CYBORK
           </span>
         </div>
-        <p className="text-xs" style={{ color: "hsl(0 0% 28%)" }}>
+        <p className="text-xs" style={{ color: "hsl(0 0% 26%)" }}>
           Not affiliated with Discord Inc.
         </p>
         <div className="flex gap-5">
@@ -799,7 +754,7 @@ function Footer() {
               key={item}
               href="#"
               className="text-xs transition-colors hover:text-white"
-              style={{ color: "hsl(0 0% 35%)" }}
+              style={{ color: "hsl(0 0% 33%)" }}
             >
               {item}
             </a>
@@ -813,10 +768,7 @@ function Footer() {
 /* ─── Page ───────────────────────────────────────────────────────────────── */
 export default function Landing() {
   return (
-    <div
-      className="min-h-screen"
-      style={{ background: "hsl(30 5% 7%)" }}
-    >
+    <div className="min-h-screen" style={{ background: "hsl(30 5% 7%)" }}>
       <Nav />
       <Hero />
       <Features />

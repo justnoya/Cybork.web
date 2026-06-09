@@ -5,6 +5,9 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import Landing from "@/pages/Landing";
 import Banner from "@/pages/Banner";
+import Terms from "@/pages/Terms";
+import Privacy from "@/pages/Privacy";
+import Support from "@/pages/Support";
 
 const queryClient = new QueryClient();
 
@@ -13,6 +16,9 @@ function Router() {
     <Switch>
       <Route path="/" component={Landing} />
       <Route path="/banner" component={Banner} />
+      <Route path="/terms" component={Terms} />
+      <Route path="/privacy" component={Privacy} />
+      <Route path="/support" component={Support} />
       <Route component={NotFound} />
     </Switch>
   );

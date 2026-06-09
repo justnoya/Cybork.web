@@ -180,19 +180,24 @@ const CardNav: React.FC<CardNavProps> = ({
               ref={setCardRef(idx)}
               style={{ backgroundColor: item.bgColor, color: item.textColor }}
             >
-              <div className="nav-card-label">{item.label}</div>
-              <div className="nav-card-links">
-                {item.links?.map((lnk, i) => (
-                  <a
-                    key={`${lnk.label}-${i}`}
-                    className="nav-card-link"
-                    href={lnk.href}
-                    aria-label={lnk.ariaLabel}
-                  >
-                    <GoArrowUpRight className="nav-card-link-icon" size={11} aria-hidden="true" />
-                    {lnk.label}
-                  </a>
-                ))}
+              <span className="nav-card-corner-tl" />
+              <span className="nav-card-corner-br" />
+              <div className="nav-card-inner">
+                <div className="nav-card-label">{item.label}</div>
+                <div className="nav-card-divider" />
+                <div className="nav-card-links">
+                  {item.links?.map((lnk, i) => (
+                    <a
+                      key={`${lnk.label}-${i}`}
+                      className="nav-card-link"
+                      href={lnk.href}
+                      aria-label={lnk.ariaLabel}
+                    >
+                      <GoArrowUpRight className="nav-card-link-icon" size={11} aria-hidden="true" />
+                      {lnk.label}
+                    </a>
+                  ))}
+                </div>
               </div>
             </div>
           ))}

@@ -296,13 +296,13 @@ const CYBORK_NAV_ITEMS = [
     ],
   },
   {
-    label: "Stats",
+    label: "Legal",
     bgColor: "rgba(22, 24, 30, 0.97)",
     textColor: "rgba(255,255,255,0.85)",
     links: [
-      { label: "1,200+ Servers",  href: "#stats", ariaLabel: "Server count stat" },
-      { label: "50K+ Members",    href: "#stats", ariaLabel: "Member count stat" },
-      { label: "2M+ Commands Run",href: "#stats", ariaLabel: "Commands run stat" },
+      { label: "Terms of Service", href: "/terms",   ariaLabel: "Terms of Service" },
+      { label: "Privacy Policy",   href: "/privacy", ariaLabel: "Privacy Policy" },
+      { label: "Support",          href: "/support", ariaLabel: "Support" },
     ],
   },
 ];
@@ -895,15 +895,15 @@ function Footer() {
         </p>
 
         <div className="flex gap-5">
-          {["Terms", "Privacy", "Support"].map((item) => (
+          {[["Terms", "/terms"], ["Privacy", "/privacy"], ["Support", "/support"]].map(([label, href]) => (
             <a
-              key={item}
-              href="#"
-              style={{ color: B[3], fontSize: "11px", transition: "color 150ms" }}
+              key={label}
+              href={href}
+              style={{ color: B[3], fontSize: "11px", transition: "color 150ms", textDecoration: "none" }}
               onMouseEnter={(e) => (e.currentTarget.style.color = B[5])}
               onMouseLeave={(e) => (e.currentTarget.style.color = B[3])}
             >
-              {item}
+              {label}
             </a>
           ))}
         </div>

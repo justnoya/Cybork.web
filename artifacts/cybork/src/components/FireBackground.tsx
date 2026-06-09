@@ -1,97 +1,125 @@
 import { useEffect, useRef } from "react";
 
-/* ─── Flame particle ─────────────────────────────────────────────────────── */
-interface Flame {
-  x: number;          // horizontal position
-  baseX: number;      // origin x (for sine-drift)
-  y: number;          // current y (rises upward = decreasing)
-  vy: number;         // vertical speed (negative = upward)
-  w: number;          // flame width
-  h: number;          // flame height (taller = narrower near tip)
-  life: number;
-  maxLife: number;
-  phase: number;      // sine phase offset for sway
-  driftAmp: number;   // sway amplitude
-  driftFreq: number;  // sway frequency
+/* ─── Flame shape ────────────────────────────────────────────────────────────
+   Draws a pointed flame silhouette matching the Cybork logo:
+   - Wide base
+   - Concave sides that narrow inward at mid-height
+   - Sharp pointed tip
+   Optionally adds an inner secondary tip (the "inner flame" cutout look)
+*/
+function drawFlameShape(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  baseY: number,
+  width: number,
+  height: number,
+  alpha: number,
+  tipOffset: number = 0, // slight horizontal tip lean
+) {
+  const hw = width / 2;
+  const tipX = cx + tipOffset;
+  const tipY = baseY - height;
+
+  /* concave waist — about 38% up from base */
+  const waistY = baseY - height * 0.40;
+  const waistInset = hw * 0.30;
+
+  /* gradient: white at base, dims toward tip */
+  const grad = ctx.createLinearGradient(cx, baseY, tipX, tipY);
+  grad.addColorStop(0,    `rgba(255,255,255,${(alpha).toFixed(3)})`);
+  grad.addColorStop(0.30, `rgba(230,232,238,${(alpha * 0.82).toFixed(3)})`);
+  grad.addColorStop(0.60, `rgba(195,198,210,${(alpha * 0.45).toFixed(3)})`);
+  grad.addColorStop(0.85, `rgba(170,172,185,${(alpha * 0.15).toFixed(3)})`);
+  grad.addColorStop(1,    `rgba(160,162,175,0)`);
+
+  ctx.beginPath();
+
+  /* bottom-left corner */
+  ctx.moveTo(cx - hw, baseY);
+
+  /* LEFT side: straight base → concave waist → pointed tip */
+  ctx.bezierCurveTo(
+    cx - hw,          baseY - height * 0.12,  /* hug base */
+    cx - waistInset,  waistY,                  /* concave waist */
+    tipX, tipY,                                /* tip */
+  );
+
+  /* RIGHT side: tip → concave waist → base-right */
+  ctx.bezierCurveTo(
+    cx + waistInset,  waistY,
+    cx + hw,          baseY - height * 0.12,
+    cx + hw, baseY,
+  );
+
+  /* soft base arc */
+  ctx.quadraticCurveTo(cx, baseY + hw * 0.08, cx - hw, baseY);
+  ctx.closePath();
+
+  ctx.fillStyle = grad;
+  ctx.fill();
 }
 
-function makeFlame(canvasW: number, canvasH: number): Flame {
-  /* mix of thin/tall flames and wide/short ones */
+/* ─── Particle ───────────────────────────────────────────────────────────── */
+interface FP {
+  baseX: number;
+  x: number;
+  y: number;
+  vy: number;
+  w: number;
+  h: number;
+  life: number;
+  maxLife: number;
+  phase: number;
+  driftAmp: number;
+  driftFreq: number;
+  tipLean: number;
+  size: "sm" | "md" | "lg";
+}
+
+function makeFlame(W: number, H: number): FP {
   const r = Math.random();
-  const isBig = r > 0.70;
-  const isMed = r > 0.38;
+  const size: FP["size"] = r > 0.72 ? "lg" : r > 0.42 ? "md" : "sm";
 
-  const w = isBig
-    ? 80  + Math.random() * 120
-    : isMed
-    ? 35  + Math.random() * 50
-    : 14  + Math.random() * 24;
+  const w =
+    size === "lg" ? 70 + Math.random() * 100 :
+    size === "md" ? 30 + Math.random() * 45  :
+                    10 + Math.random() * 20;
 
-  const h = isBig
-    ? 200 + Math.random() * 200
-    : isMed
-    ? 90  + Math.random() * 100
-    : 40  + Math.random() * 60;
+  const h =
+    size === "lg" ? 180 + Math.random() * 200 :
+    size === "md" ? 80  + Math.random() * 90  :
+                    35  + Math.random() * 45;
 
-  const speed = isBig
-    ? 0.8 + Math.random() * 0.8
-    : isMed
-    ? 1.4 + Math.random() * 1.2
-    : 2.0 + Math.random() * 1.8;
+  const speed =
+    size === "lg" ? 0.7  + Math.random() * 0.7 :
+    size === "md" ? 1.2  + Math.random() * 1.0 :
+                    2.0  + Math.random() * 1.8;
 
-  const maxLife = isBig
-    ? 160 + Math.random() * 120
-    : isMed
-    ? 90  + Math.random() * 80
-    : 50  + Math.random() * 50;
+  const maxLife =
+    size === "lg" ? 170 + Math.random() * 130 :
+    size === "md" ? 95  + Math.random() * 80  :
+                    50  + Math.random() * 50;
+
+  const bx = Math.random() * W;
 
   return {
-    x:         Math.random() * canvasW,
-    baseX:     Math.random() * canvasW,
-    y:         canvasH + h * 0.15,
-    vy:        -speed,
-    w,
-    h,
-    life:      0,
+    baseX: bx,
+    x: bx,
+    y: H + h * 0.2,
+    vy: -speed,
+    w, h,
+    life: 0,
     maxLife,
-    phase:     Math.random() * Math.PI * 2,
-    driftAmp:  isBig ? 18 : isMed ? 10 : 5,
-    driftFreq: 0.012 + Math.random() * 0.018,
+    phase: Math.random() * Math.PI * 2,
+    driftAmp:  size === "lg" ? 22 : size === "md" ? 12 : 5,
+    driftFreq: 0.010 + Math.random() * 0.016,
+    tipLean:   (Math.random() - 0.5) * w * 0.18,
+    size,
   };
 }
 
-/* ─── Draw one flame as a tapered ellipse ────────────────────────────────── */
-function drawFlame(ctx: CanvasRenderingContext2D, f: Flame, alpha: number) {
-  const cx = f.x;
-  const cy = f.y;
-  const rx = f.w * 0.5;   // horizontal radius
-  const ry = f.h * 0.5;   // vertical radius (flame height)
-
-  /* vertical gradient: bright base → dim tip */
-  const grad = ctx.createLinearGradient(cx, cy + ry, cx, cy - ry);
-  grad.addColorStop(0,    `rgba(245,245,250,${(alpha * 0.85).toFixed(3)})`);
-  grad.addColorStop(0.25, `rgba(220,222,228,${(alpha * 0.70).toFixed(3)})`);
-  grad.addColorStop(0.55, `rgba(190,192,200,${(alpha * 0.35).toFixed(3)})`);
-  grad.addColorStop(0.80, `rgba(160,162,170,${(alpha * 0.12).toFixed(3)})`);
-  grad.addColorStop(1,    `rgba(150,150,160,0)`);
-
-  ctx.save();
-  ctx.globalCompositeOperation = "screen";
-
-  /* clip to an ellipse so the top tapers to a point */
-  ctx.beginPath();
-  ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
-  ctx.clip();
-
-  /* fill with gradient */
-  ctx.fillStyle = grad;
-  ctx.fill();
-
-  ctx.restore();
-}
-
 /* ─── Component ──────────────────────────────────────────────────────────── */
-export function FireBackground({ opacity = 0.55 }: { opacity?: number }) {
+export function FireBackground({ opacity = 0.50 }: { opacity?: number }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -101,7 +129,7 @@ export function FireBackground({ opacity = 0.55 }: { opacity?: number }) {
     if (!ctx) return;
 
     let raf: number;
-    const flames: Flame[] = [];
+    const flames: FP[] = [];
     let t = 0;
 
     const resize = () => {
@@ -111,13 +139,11 @@ export function FireBackground({ opacity = 0.55 }: { opacity?: number }) {
     resize();
     window.addEventListener("resize", resize);
 
-    /* seed with flames already in various stages so first frame is full */
-    for (let i = 0; i < 220; i++) {
+    /* seed with a full field of flames at varied life stages */
+    for (let i = 0; i < 200; i++) {
       const f = makeFlame(canvas.width, canvas.height);
-      /* scatter life so they're not all at the same stage */
-      f.life = Math.random() * f.maxLife * 0.85;
-      /* move y upward proportional to elapsed life */
-      f.y = canvas.height + f.h * 0.15 - (f.life * (-f.vy));
+      f.life = Math.random() * f.maxLife * 0.80;
+      f.y    = canvas.height + f.h * 0.2 - f.life * (-f.vy);
       flames.push(f);
     }
 
@@ -125,50 +151,53 @@ export function FireBackground({ opacity = 0.55 }: { opacity?: number }) {
       t++;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      /* soft global blur so individual ellipses blend into each other */
-      ctx.filter = "blur(6px)";
+      /* soft per-frame blur blends individual flames together */
+      ctx.filter = "blur(5px)";
+      ctx.globalCompositeOperation = "screen";
 
-      /* ── spawn new flames continuously ── */
-      const target = Math.floor(canvas.width / 10); /* ~1 flame per 10px width */
-      const spawnN = Math.max(0, Math.min(8, target - flames.length));
-      for (let i = 0; i < spawnN; i++) {
-        flames.push(makeFlame(canvas.width, canvas.height));
+      /* spawn to maintain density */
+      const target = Math.floor(canvas.width / 9);
+      if (flames.length < target) {
+        const n = Math.min(10, target - flames.length);
+        for (let i = 0; i < n; i++) flames.push(makeFlame(canvas.width, canvas.height));
       }
-      /* always trickle a few each frame for churn */
-      if (Math.random() < 0.85) flames.push(makeFlame(canvas.width, canvas.height));
+      if (Math.random() < 0.90) flames.push(makeFlame(canvas.width, canvas.height));
 
       for (let i = flames.length - 1; i >= 0; i--) {
         const f = flames[i];
         f.life++;
-
-        /* rise */
         f.y += f.vy;
 
-        /* organic left-right sway via sine */
+        /* organic sway */
         f.x = f.baseX + Math.sin(f.phase + t * f.driftFreq) * f.driftAmp;
 
-        /* slowly narrow as flame rises (tip taper) */
         const prog = f.life / f.maxLife;
-        const scale = 1 - prog * 0.55;
-        const effectiveW = f.w * scale;
-        const effectiveH = f.h * (0.9 + scale * 0.1);
 
-        /* alpha envelope: quick fade-in → hold → long fade-out */
+        /* shrink as flame rises — tip narrows */
+        const scaleFactor = 1 - prog * 0.62;
+        const fw = f.w * scaleFactor;
+        const fh = f.h * (0.85 + scaleFactor * 0.15);
+
+        /* alpha: quick in → hold → fade out */
         let alpha: number;
         if (prog < 0.08)       alpha = prog / 0.08;
-        else if (prog < 0.55)  alpha = 1;
-        else                   alpha = 1 - (prog - 0.55) / 0.45;
+        else if (prog < 0.50)  alpha = 1;
+        else                   alpha = 1 - (prog - 0.50) / 0.50;
 
-        /* cull if off-screen (top) or exhausted */
-        if (f.life >= f.maxLife || f.y + effectiveH < -50) {
+        const maxA = f.size === "lg" ? 0.38 : f.size === "md" ? 0.30 : 0.24;
+        const a = alpha * maxA;
+
+        if (f.life >= f.maxLife || f.y + fh < -80 || fw < 1) {
           flames.splice(i, 1);
           continue;
         }
 
-        drawFlame(ctx, { ...f, w: effectiveW, h: effectiveH }, alpha * 0.48);
+        drawFlameShape(ctx, f.x, f.y, fw, fh, a, f.tipLean * scaleFactor);
       }
 
       ctx.filter = "none";
+      ctx.globalCompositeOperation = "source-over";
+
       raf = requestAnimationFrame(tick);
     }
 
@@ -184,12 +213,7 @@ export function FireBackground({ opacity = 0.55 }: { opacity?: number }) {
     <canvas
       ref={canvasRef}
       className="fixed inset-0 pointer-events-none"
-      style={{
-        zIndex: 0,
-        opacity,
-        /* screen blend lets flames glow over the dark bg */
-        mixBlendMode: "screen",
-      }}
+      style={{ zIndex: 0, opacity, mixBlendMode: "screen" }}
     />
   );
 }

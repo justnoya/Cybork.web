@@ -14,10 +14,10 @@ import {
   Trophy,
   Globe,
   Check,
-  Bot,
 } from "lucide-react";
 import { SiDiscord } from "react-icons/si";
 import { FireBackground } from "@/components/FireBackground";
+import logoUrl from "@assets/5e491840e325ffc189450199e39413a5_1780984645568.webp";
 
 const DISCORD_INVITE = "https://discord.com/oauth2/authorize";
 
@@ -222,15 +222,12 @@ function Nav() {
     >
       {/* Logo */}
       <div className="flex items-center gap-2.5">
-        <div
-          className="w-8 h-8 rounded-lg flex items-center justify-center"
-          style={{
-            background: ACCENT.iconBg,
-            border: `1px solid ${ACCENT.iconBorder}`,
-          }}
-        >
-          <Bot size={15} style={{ color: ACCENT.icon }} />
-        </div>
+        <img
+          src={logoUrl}
+          alt="Cybork"
+          className="w-8 h-8 rounded-lg object-contain"
+          style={{ filter: "brightness(0) invert(1)" }}
+        />
         <span className="font-semibold text-sm tracking-wide" style={{ color: "hsl(0 0% 90%)" }}>
           CYBORK
         </span>
@@ -305,15 +302,12 @@ function Hero() {
             transition={{ duration: 0.5, delay: 0.15 }}
             className="flex items-center justify-center gap-3 mb-7"
           >
-            <div
-              className="w-11 h-11 rounded-xl flex items-center justify-center"
-              style={{
-                background: ACCENT.iconBg,
-                border: `1px solid ${ACCENT.iconBorder}`,
-              }}
-            >
-              <Bot size={20} style={{ color: ACCENT.icon }} />
-            </div>
+            <img
+              src={logoUrl}
+              alt="Cybork"
+              className="w-14 h-14 object-contain"
+              style={{ filter: "brightness(0) invert(1)" }}
+            />
             <span
               className="text-3xl font-bold"
               style={{ color: "hsl(0 0% 94%)", letterSpacing: "0.14em" }}
@@ -738,7 +732,12 @@ function Footer() {
     >
       <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-2">
-          <Bot size={14} style={{ color: ACCENT.icon, opacity: 0.6 }} />
+          <img
+            src={logoUrl}
+            alt="Cybork"
+            className="w-5 h-5 object-contain opacity-40"
+            style={{ filter: "brightness(0) invert(1)" }}
+          />
           <span
             className="text-xs font-semibold tracking-widest"
             style={{ color: "hsl(0 0% 35%)" }}
